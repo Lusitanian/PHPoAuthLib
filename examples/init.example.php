@@ -43,6 +43,10 @@ $servicesCredentials = array(
         'key'       => '',
         'secret'    => '',
     ),
+    'cleverreach' => array(
+        'key'       => '',
+        'secret'    => '',
+    ),
     'dailymotion' => array(
         'key'       => '',
         'secret'    => '',
