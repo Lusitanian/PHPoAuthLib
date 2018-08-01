@@ -114,7 +114,9 @@ class QuickBooks extends AbstractService
         $body = null,
         array $extraHeaders = array()
     ) {
-        $extraHeaders['Accept'] = 'application/json';
+        if( !isset( $extraHeaders['Accept'] ) ) {
+            $extraHeaders['Accept'] = 'application/json';
+        }
         return parent::request($path, $method, $body, $extraHeaders);
     }
 }
