@@ -98,6 +98,7 @@ Included service implementations
     - Ustream
     - Vimeo
     - Vkontakte
+    - Wrike
     - Yahoo
     - Yammer
 - more to come!
