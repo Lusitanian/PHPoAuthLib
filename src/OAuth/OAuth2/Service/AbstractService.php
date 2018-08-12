@@ -361,4 +361,27 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
     {
         return ' ';
     }
+
+    /**
+     * Set Scopes If not defined already
+     *
+     * @param $scopes
+     * @return $this
+     */
+    public function setScopes($scopes)
+    {
+        $this->scopes = $scopes;
+
+        return $this;
+    }
+
+    /**
+     * Get Scopes set for the service
+     *
+     * @return array
+     */
+    public function getScopes()
+    {
+        return $this->scopes;
+    }
 }
