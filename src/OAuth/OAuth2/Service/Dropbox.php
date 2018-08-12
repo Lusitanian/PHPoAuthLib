@@ -14,7 +14,7 @@ use OAuth\Common\Http\Uri\UriInterface;
  * Dropbox service.
  *
  * @author Flávio Heleno <flaviohbatista@gmail.com>
- * @link https://www.dropbox.com/developers/core/docs
+ * @link https://www.dropbox.com/developers/documentation/http/documentation
  */
 class Dropbox extends AbstractService
 {
@@ -28,7 +28,7 @@ class Dropbox extends AbstractService
         parent::__construct($credentials, $httpClient, $storage, $scopes, $baseApiUri);
 
         if (null === $baseApiUri) {
-            $this->baseApiUri = new Uri('https://api.dropbox.com/1/');
+            $this->baseApiUri = new Uri('https://api.dropboxapi.com/2/');
         }
     }
 
@@ -62,7 +62,7 @@ class Dropbox extends AbstractService
      */
     public function getAuthorizationEndpoint()
     {
-        return new Uri('https://www.dropbox.com/1/oauth2/authorize');
+        return new Uri('https://www.dropbox.com/oauth2/authorize');
     }
 
     /**
@@ -70,7 +70,7 @@ class Dropbox extends AbstractService
      */
     public function getAccessTokenEndpoint()
     {
-        return new Uri('https://api.dropbox.com/1/oauth2/token');
+        return new Uri('https://api.dropboxapi.com/oauth2/token');
     }
 
     /**
@@ -78,7 +78,7 @@ class Dropbox extends AbstractService
      */
     protected function getAuthorizationMethod()
     {
-        return static::AUTHORIZATION_METHOD_QUERY_STRING;
+        return static::AUTHORIZATION_METHOD_HEADER_BEARER;
     }
 
     /**
