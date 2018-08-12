@@ -52,6 +52,41 @@ class FitBit extends AbstractService
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function requestAccessToken($token, $verifier, $tokenSecret = null)
+    {
+        if (is_null($tokenSecret)) {
+            $storedRequestToken = $this->storage->retrieveAccessToken($this->service());
+            $tokenSecret = $storedRequestToken->getRequestTokenSecret();
+        }
+        $this->signature->setTokenSecret($tokenSecret);
+
+        $bodyParams = array(
+            'oauth_verifier' => $verifier,
+        );
+
+        $authorizationHeader = array(
+            'Authorization' => $this->buildAuthorizationHeaderForAPIRequest(
+                'POST',
+                $this->getAccessTokenEndpoint(),
+                $this->storage->retrieveAccessToken($this->service()),
+                $bodyParams
+            )
+        );
+
+        $headers = array_merge($authorizationHeader, $this->getExtraOAuthHeaders());
+
+        //Only change
+        $responseBody = $this->httpClient->retrieveResponse($this->getAccessTokenEndpoint(), array(), $headers);
+
+        $token = $this->parseAccessTokenResponse($responseBody);
+        $this->storage->storeAccessToken($this->service(), $token);
+
+        return $token;
+    }
+
+    /**
      * {@inheritdoc}
      */
     protected function parseRequestTokenResponse($responseBody)
@@ -74,10 +109,18 @@ class FitBit extends AbstractService
     {
         parse_str($responseBody, $data);
 
-        if (null === $data || !is_array($data)) {
+        if (null === $data || !is_array($data) || !isset($data['oauth_token']) || !isset($data['oauth_token_secret'])) {
+            if (isset($data['error'])) {
+                throw new TokenResponseException('Error in retrieving token: "' . $data['error'] . '"');
+            }
+
+            $data = json_decode($responseBody, true);
+
+            if (isset($data['errors'])) {
+                throw new TokenResponseException('Error in retrieving token: "' . $data['errors'][0]['message'] . '"');
+            }
+
             throw new TokenResponseException('Unable to parse response.');
-        } elseif (isset($data['error'])) {
-            throw new TokenResponseException('Error in retrieving token: "' . $data['error'] . '"');
         }
 
         $token = new StdOAuth1Token();
