@@ -138,7 +138,12 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
         );
         $headers = array_merge($authorizationHeader, $extraHeaders);
 
-        return $this->httpClient->retrieveResponse($uri, $body, $headers, $method);
+        try {
+          $response = $this->httpClient->retrieveResponse($uri, $body, $headers, $method);
+        } catch(TokenResponseException $e) {
+          throw $e;
+        }
+        return $response;
     }
 
     /**
