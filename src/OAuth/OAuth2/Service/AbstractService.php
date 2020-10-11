@@ -211,6 +211,9 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
             $parameters,
             $this->getExtraOAuthHeaders()
         );
+
+        $responseBody = $this->carryRefreshToken($responseBody, $refreshToken);
+
         $token = $this->parseAccessTokenResponse($responseBody);
         $this->storage->storeAccessToken($this->service(), $token);
 
@@ -239,6 +242,26 @@ abstract class AbstractService extends BaseAbstractService implements ServiceInt
     public function needsStateParameterInAuthUrl()
     {
         return $this->stateParameterInAuthUrl;
+    }
+
+    /**
+     * Carry the refresh_token for next time getting refreshed
+     *
+     * @param $responseBody
+     *
+     * @param $refreshToken
+     *
+     * @return string
+     */
+    protected function carryRefreshToken($responseBody, $refreshToken)
+    {
+        $responseJson = json_decode($responseBody, true);
+        if (empty($responseJson['refresh_token'])) {
+            $responseJson['refresh_token'] = $refreshToken;
+            return json_encode($responseJson);
+        } else {
+            return $responseBody;
+        }
     }
 
     /**
