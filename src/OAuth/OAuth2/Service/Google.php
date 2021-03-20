@@ -128,6 +128,12 @@ class Google extends AbstractService
     const SCOPE_CLASSROOM_ROSTERS = 'https://www.googleapis.com/auth/classroom.rosters';
     const SCOPE_CLASSROOM_ROSTERS_READONLY = 'https://www.googleapis.com/auth/classroom.rosters.readonly';
 
+    // Reports
+    const SCOPE_REPORTS_USAGE               = 'https://www.googleapis.com/auth/admin.reports.usage.readonly';
+    const SCOPE_REPORTS_AUDIT               = 'https://www.googleapis.com/auth/admin.reports.audit.readonly';
+
+
+
     protected $accessType = 'online';
 
     public function __construct(
