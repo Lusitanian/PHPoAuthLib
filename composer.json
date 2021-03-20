@@ -3,6 +3,7 @@
     "description": "PHP 7.2 oAuth 1/2 Library",
     "keywords": ["oauth", "authentication", "authorization", "security"],
     "license": "MIT",
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "David Desberg",
