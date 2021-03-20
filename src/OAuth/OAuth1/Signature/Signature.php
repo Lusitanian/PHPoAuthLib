@@ -51,6 +51,9 @@ class Signature implements SignatureInterface
      */
     public function getSignature(UriInterface $uri, array $params, $method = 'POST')
     {
+        if ($this->algorithm == 'PLAINTEXT') // can be specified by extending service->getSignatureMethod()
+	        return $this->getSigningKey();
+
         parse_str($uri->getQuery(), $queryStringData);
 
         foreach (array_merge($queryStringData, $params) as $key => $value) {
