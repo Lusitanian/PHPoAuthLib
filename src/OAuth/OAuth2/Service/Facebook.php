@@ -168,8 +168,8 @@ class Facebook extends AbstractService
 
         if (null === $data || !is_array($data)) {
             throw new TokenResponseException('Unable to parse response.');
-        } elseif (isset($data['error'])) {
-            throw new TokenResponseException('Error in retrieving token: "' . $data['error'] . '"');
+        } elseif (isset($data['error']) && isset($data['error']['message'])) {
+            throw new TokenResponseException('Error in retrieving token: "' . $data['error']['message'] . '"');
         }
 
         $token = new StdOAuth2Token();
