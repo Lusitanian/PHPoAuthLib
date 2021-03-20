@@ -101,34 +101,65 @@ class Flickr extends AbstractService
 
     public function requestRest($path, $method = 'GET', $body = null, array $extraHeaders = [])
     {
-        return $this->request($path, $method, $body, $extraHeaders);
+        return $this->requestAPI($path, $method, $body, $extraHeaders);
     }
 
     public function requestXmlrpc($path, $method = 'GET', $body = null, array $extraHeaders = [])
     {
         $this->format = 'xmlrpc';
 
-        return $this->request($path, $method, $body, $extraHeaders);
+        return $this->requestAPI($path, $method, $body, $extraHeaders);
     }
 
     public function requestSoap($path, $method = 'GET', $body = null, array $extraHeaders = [])
     {
         $this->format = 'soap';
 
-        return $this->request($path, $method, $body, $extraHeaders);
+        return $this->requestAPI($path, $method, $body, $extraHeaders);
     }
 
     public function requestJson($path, $method = 'GET', $body = null, array $extraHeaders = [])
     {
         $this->format = 'json';
 
-        return $this->request($path, $method, $body, $extraHeaders);
+        return $this->requestAPI($path, $method, $body, $extraHeaders);
     }
 
     public function requestPhp($path, $method = 'GET', $body = null, array $extraHeaders = [])
     {
         $this->format = 'php_serial';
 
-        return $this->request($path, $method, $body, $extraHeaders);
+        return $this->requestAPI($path, $method, $body, $extraHeaders);
+    }
+    
+    public function requestAPI(array $path = array(), $method = 'GET', $body = null, array $extraHeaders = array())
+    {
+        $uri = $this->determineRequestUriFromPath('/', $this->baseApiUri);
+        $uri->addToQuery('method', $path['method']);
+        // Revision 2
+        unset($path['method']);
+        if(!empty($path)) {
+
+            foreach ($path as $key => $value) {
+                $uri->addToQuery($key, $value);
+            }
+        }
+
+        if (!empty($this->format)) {
+            $uri->addToQuery('format', $this->format);
+
+            if ($this->format === 'json') {
+                $uri->addToQuery('nojsoncallback', 1);
+            }
+        }
+
+        $token = $this->storage->retrieveAccessToken($this->service());
+        $extraHeaders = array_merge($this->getExtraApiHeaders(), $extraHeaders);
+        $authorizationHeader = array(
+            'Authorization' => $this->buildAuthorizationHeaderForAPIRequest($method, $uri, $token, $body)
+        );
+        $headers = array_merge($authorizationHeader, $extraHeaders);
+
+        return $this->httpClient->retrieveResponse($uri, $body, $headers, $method);
     }
 }
