@@ -28,6 +28,11 @@ class Flickr extends AbstractService
         }
     }
 
+    public function getUploadServiceEndpoint()
+    {
+        return new Uri('https://www.flickr.com/services/oauth/request_token');
+    }
+
     public function getRequestTokenEndpoint()
     {
         return new Uri('https://www.flickr.com/services/oauth/request_token');
@@ -79,7 +84,9 @@ class Flickr extends AbstractService
     public function request($path, $method = 'GET', $body = null, array $extraHeaders = [])
     {
         $uri = $this->determineRequestUriFromPath('/', $this->baseApiUri);
-        $uri->addToQuery('method', $path);
+        if ($this->baseApiUri->getAbsoluteUri() !== $this->getUploadServiceEndpoint()->getAbsoluteUri()) {
+            $uri->addToQuery('method', $path);
+        }
 
         if (!empty($this->format)) {
             $uri->addToQuery('format', $this->format);
